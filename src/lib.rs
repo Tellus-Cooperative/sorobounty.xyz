@@ -19,7 +19,7 @@ use crate::fee::{ fee_set };
 use crate::participance::{ participance_set };
 use crate::bounty::{
     bounty_count, 
-    bounty_create, bounty_fund, bounty_submit, bounty_approve, bounty_reject, bounty_cancel, 
+    bounty_create, bounty_fund, bounty_submit, bounty_approve, bounty_reject, bounty_cancel, bounty_close, 
     error
 };
 
@@ -48,7 +48,7 @@ impl BountyHunter {
         name: String, 
         reward: u64, 
         pay_token: Address, 
-        deadline: u32, 
+        deadline: u64, 
         // b_type: u32, 
         // difficulty: u32
     ) -> u32 {
@@ -135,6 +135,18 @@ impl BountyHunter {
         bounty_id: u32
     ) -> Error {
         let ret: Error = bounty_cancel(&e, &creator, bounty_id);
+
+        e.storage().instance().set(&DataKey::ErrorCode, &ret);
+        e.storage().instance().bump(INSTANCE_BUMP_AMOUNT);
+
+        ret
+    }
+
+    pub fn close_bounty(e: Env, 
+        admin: Address, 
+        bounty_id: u32
+    ) -> Error {
+        let ret: Error = bounty_close(&e, &admin, bounty_id);
 
         e.storage().instance().set(&DataKey::ErrorCode, &ret);
         e.storage().instance().bump(INSTANCE_BUMP_AMOUNT);

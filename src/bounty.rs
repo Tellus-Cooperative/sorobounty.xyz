@@ -32,7 +32,7 @@ pub fn bounty_create(
     name: &String, 
     reward_amount: u64, 
     pay_token: &Address, 
-    deadline: u32, 
+    deadline: u64, 
     // b_type: u32, 
     // difficulty: u32
 ) -> u32 {
@@ -306,6 +306,45 @@ pub fn bounty_cancel(e: &Env,
     // emit BountyCancelled event
     e.events().publish((BOUNTY, symbol_short!("BCancel")), 
         (creator.clone(), bounty_id)
+    );
+
+    Error::Success
+}
+
+pub fn bounty_close(e: &Env, 
+    admin: &Address, 
+    bounty_id: u32
+) -> Error {
+    if !e.storage().instance().has(&DataKey::RegBounties(bounty_id)) {
+        // panic!("can't find bounty");
+        return Error::BountyNotFound;
+    }
+    let mut bounty = bounty_load(e, bounty_id);
+
+    if bounty.status != BountyStatus::FUNDED {
+        // panic!("bounty not available");
+        return Error::InvalidBountyStatus;
+    }
+    if bounty.end_date > e.ledger().timestamp() {
+        // panic!("bounty not timeout!");
+        return Error::NoTimeout;
+    }
+
+    admin.require_auth();
+
+    // refund to creator
+    token::Client::new(e, &bounty.pay_token).transfer(
+        &e.current_contract_address(), 
+        &bounty.creator, 
+        &(bounty.reward_amount as i128), 
+    );
+
+    bounty.status = BountyStatus::CLOSED;
+    bounty_write(e, bounty_id, &bounty);
+
+    // emit BountyClosed event
+    e.events().publish((BOUNTY, symbol_short!("BClose")), 
+        (admin.clone(), bounty_id)
     );
 
     Error::Success

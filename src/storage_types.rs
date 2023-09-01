@@ -35,7 +35,8 @@ pub enum Error {
     InsuffCreatorAllowance = 146,
     CreatorBountyMismatch = 147,
     InvalidBountyID = 148,
-    InvalidWorkRepo = 149
+    InvalidWorkRepo = 149,
+    NoTimeout = 150,
 }
 
 #[derive(Clone)]
@@ -96,7 +97,7 @@ pub struct BountyInfo {
     // pub description: String,
     // pub repo_link: String,
     pub reward_amount: u64,
-    pub end_date: u32,
+    pub end_date: u64,
     // pub bounty_type: BountyType,
     // pub difficulty: BountyDifficulty,
 
