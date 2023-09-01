@@ -3,7 +3,7 @@ extern crate std;
 
 use soroban_sdk::{ log, token, BytesN };
 use crate::storage_types::{ DEF_FEE_RATE, TOKEN_DECIMALS, FeeInfo };
-use crate::{ TokenSwap, TokenSwapClient };
+use crate::{ Bounty, BountyClient };
 
 
 use soroban_sdk::{
@@ -25,7 +25,7 @@ fn create_token_contract<'a>(
     )
 }
 
-fn create_token_swap_contract<'a>(
+fn create_bounty_contract<'a>(
     e: &Env,
 ) -> TokenSwapClient<'a> {
     let token_swap = TokenSwapClient::new(e, &e.register_contract(None, TokenSwap {}));
@@ -47,7 +47,7 @@ fn test() {
     
     
     // create contract
-    let token_swap = create_token_swap_contract(
+    let token_swap = create_bounty_contract(
         &e,
     );
 
