@@ -1,29 +1,18 @@
 
+use soroban_sdk::{ log, symbol_short, 
+    Env, Symbol, Address, String };
+
+use crate::storage_types::{ INSTANCE_BUMP_AMOUNT, WorkStatus, WorkInfo, DataKey };
+
+
 pub fn work_create(
     e: &Env, 
     participant: &Address, 
     bounty_id: u32, 
-    work_repo: String
+    work_repo: &String
 ) -> u32 {
-    // check args
-    if bounty_id == 0 {
-        // panic!("bounty_id is zero!");
-        return Error.INVALID_BOUNTY_ID;
-    }
-    if !bounty_check(e, bounty_id) {
-        // panic!("bounty not found!");
-        return Error.BOUNTY_NOT_FOUND;
-    }
-    if work_repo == "" {
-        // panic!("invalid repo!");
-        return Error.INVALID_WORK_REPO;
-    }
-    
-    // Authorize the `create` call by participant to verify his/her identity.
-    participant.require_auth();
-
-    // write bounty info
-    let work_count: u32 = e.storage().instance().get(&DataKey::WORK_COUNT).unwrap_or(0);
+    // write work info
+    let work_count: u32 = e.storage().instance().get(&DataKey::WorkCount).unwrap_or(0);
     let work_id: u32 = work_count;
 
     work_write(
@@ -37,14 +26,19 @@ pub fn work_create(
         },
     );
     
-    // increase bounty count
-    e.storage().instance().set(&DataKey::WORK_COUNT, &(work_count + 1));
+    // increase work count
+    e.storage().instance().set(&DataKey::WorkCount, &(work_count + 1));
     e.storage().instance().bump(INSTANCE_BUMP_AMOUNT);
 
-    // emit BountyCreated event
-    e.events().publish((WORK, symbol_short!("WCreate")), 
-        (bounty_id, creator.clone(), name.clone(), reward_amount, deadline)
-    );
-
     work_id
+}
+
+
+pub fn work_get(e: &Env, key: u32) -> WorkInfo {
+    e.storage().instance().get(&DataKey::RegWorks(key)).unwrap()
+}
+
+pub fn work_write(e: &Env, key: u32, work: &WorkInfo) {
+    e.storage().instance().set(&DataKey::RegWorks(key), work);
+    e.storage().instance().bump(INSTANCE_BUMP_AMOUNT);
 }
