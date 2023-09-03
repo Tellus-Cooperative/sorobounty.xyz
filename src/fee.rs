@@ -1,4 +1,4 @@
-use soroban_sdk::{ Env };
+use soroban_sdk::{ Env, Address };
 use crate::storage_types::{ FEE_DECIMALS, INSTANCE_BUMP_AMOUNT, DataKey, FeeInfo };
 
 
@@ -23,8 +23,10 @@ pub fn fee_get(e: &Env) -> FeeInfo {
     e.storage().instance().get(&key).unwrap()
 }
 
-pub fn fee_set(e: &Env, fee_info: &FeeInfo) {
+pub fn fee_set(e: &Env, admin: &Address, fee_info: &FeeInfo) {
     let key = DataKey::Fee;
+
+    admin.require_auth();
 
     e.storage().instance().set(&key, fee_info);
     e.storage().instance().bump(INSTANCE_BUMP_AMOUNT);

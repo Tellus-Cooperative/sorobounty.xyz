@@ -9,7 +9,7 @@ mod bounty;
 
 use soroban_sdk::{
     token, contract, contractimpl, 
-    Address, Env, String
+    Env, Address, String
 };
 use crate::storage_types::{ INSTANCE_BUMP_AMOUNT, FeeInfo, DataKey, Error };
 use crate::fee::{ fee_set };
@@ -26,9 +26,9 @@ pub struct BountyHunter;
 
 #[contractimpl]
 impl BountyHunter {
-    pub fn set_fee(e: Env, fee_rate: u32, fee_wallet: Address) {
+    pub fn set_fee(e: Env, admin: Address, fee_rate: u32, fee_wallet: Address) {
         let fee_info: FeeInfo = FeeInfo {fee_rate, fee_wallet};
-        fee_set(&e, &fee_info);
+        fee_set(&e, &admin, &fee_info);
     }
 
     pub fn get_error(e: Env) -> u32 {
