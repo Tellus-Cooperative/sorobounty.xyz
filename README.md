@@ -1,2 +1,2 @@
-# Bounty Hunter Smart contract
-Bounty Hunter Smart contract on Stellar blockchain
+# BountyHunter WebApp
+BountyHunter WebApp on Stellar blockchain
