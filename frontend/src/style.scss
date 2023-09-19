@@ -73,7 +73,7 @@ h5 {
   align-items: center;
   background: rgba(0, 0, 0, 0.5);
   border-bottom: solid 1px rgba(255, 255, 255, 1);
-  z-index: 999;
+  z-index: 989;
   transition: all 0.6s ease;
 
   &.white {
@@ -833,8 +833,8 @@ footer {
   font-weight: 500;
   padding: 15px 25px;
   width: fit-content;
-  background: linear-gradient(#013425, #013425) padding-box, linear-gradient(135deg, rgba(0, 245, 255, 1) 0%, rgba(0, 232, 125, 1) 87.58%, rgba(0, 230, 106, 1) 100%) border-box;
-  background-color: #013425;
+  background: linear-gradient(#011934, #011934) padding-box, linear-gradient(135deg, rgb(0, 132, 255) 0%, rgb(0, 93, 232) 87.58%, rgb(0, 92, 230) 100%) border-box;
+  background-color: #011134;
   border: solid 2px transparent;
   color: white;
   border-radius: 5rem;
@@ -847,7 +847,7 @@ footer {
   }
 
   &:hover {
-    background: linear-gradient(135deg, rgba(0, 245, 255, 1) 0%, rgba(0, 232, 125, 1) 87.58%, rgba(0, 230, 106, 1) 100%) border-box;
+    background: linear-gradient(135deg, rgba(0, 132, 255, 1) 0%, rgba(0, 93, 232, 1) 87.58%, rgba(0, 92, 230, 1) 100%) border-box;
     color: black;
     transition: all .5s;
   }
@@ -960,4 +960,12 @@ input::-webkit-inner-spin-button {
     box-shadow: 2px 2px 4px 0px rgb(255 255 255);
     transition: all 0.3s ease;
   }
+}
+
+.description {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* number of lines to show */
+          line-clamp: 3; 
+  -webkit-box-orient: vertical;
 }

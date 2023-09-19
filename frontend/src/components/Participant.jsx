@@ -1,7 +1,25 @@
+import { useState, useEffect } from 'react';
 import { Reveal } from 'react-awesome-reveal';
-import { fadeInUp } from '../utils';
+import { fadeInUp, shortenAddress, getWorkStatus, getTimeDifference } from '../utils';
+import useBounty, { WorkStatus } from '../hooks/useBounty';
+import useBackend from '../hooks/useBackend';
 
-export const Participant = () => {
+export const Participant = ({ bountyId, submit }) => {
+  const { getWorks } = useBackend();
+  const [works, setWorks] = useState([]);
+
+  useEffect(() => {
+    if (!bountyId)
+      return;
+
+    async function fetchWorks(bountyId) {
+      const bountyWorks = await getWorks(bountyId, submit ? WorkStatus.SUBMITTED : WorkStatus.APPLIED);
+      setWorks(bountyWorks);
+    }
+
+    fetchWorks(bountyId);
+  }, [bountyId]);
+
   return (
     <div>
       <Reveal keyframes={fadeInUp} className='onStep' delay={0} duration={800} triggerOnce>
@@ -14,13 +32,19 @@ export const Participant = () => {
             </div>
           </div>
           <div className='info-body'>
-            {[1, 1, 1].map((v, i) => (
-              <div key={i} className='flex justify-evenly items-center sm:text-center'>
-                <div className='flex my-2 text-[16px] '><span>GS573KASDHK...AZEW (Worker {`${i+1}`})</span></div>
-                <div className='flex my-2 text-[16px] '><span>In Progress</span></div>
-                <div className='flex my-2 text-[16px] '><span>10 hours ago</span></div>
-              </div>
-            ))}
+            <table className='w-full '>
+              <tbody>
+              {
+                works.length ? works.map((work, idx) => (
+                  <tr className='text-[16px]'>
+                    <td width="45%" className='text-center p-2'>{shortenAddress(work?.participant.wallet)} ({work?.participant.name})</td>
+                    <td width="25%" className='text-center'>{getWorkStatus(work?.status)}</td>
+                    <td width="" className='text-center'>{submit ? getTimeDifference(work?.submitDate) : getTimeDifference(work?.applyDate)} ago</td>
+                  </tr>
+                )) : <tr><td className='text-center'>No Participants</td></tr>
+              }
+              </tbody>
+            </table>
           </div>
         </div>
       </Reveal>
