@@ -2,10 +2,8 @@ use soroban_sdk::{ contracttype, Address, String };
 
 
 pub(crate) const FEE_DECIMALS: u32 = 4;     // fee is described with the unit of 0.01%
-pub(crate) const DEF_FEE_RATE: u32 = 30;    // default fee is 0.3%
-pub(crate) const TOKEN_DECIMALS: u32 = 4;
 
-pub(crate) const INSTANCE_BUMP_AMOUNT: u32 = 34560; // 2 days
+pub(crate) const INSTANCE_BUMP_AMOUNT: u32 = /* 34560 */ 535680; // 2 days
 
 
 #[derive(Clone, Copy, PartialEq, Debug)]
@@ -28,17 +26,18 @@ pub enum ErrorCode {
     
     // Bounty
     BountyNotFound = 130,
-    InvalidBountyStatus = 131,
-    EmptyName = 132,
-    ZeroReward = 133,
-    ZeroDeadline = 134,
-    InsuffCreatorBalance = 135,
-    InsuffCreatorAllowance = 136,
-    InvalidCreator = 137,
-    InvalidParticipant = 138,
-    InvalidBountyID = 139,
-    InvalidWorkRepo = 140,
-    NoTimeout = 141
+    NoApplyToSelfBounty = 131,
+    InvalidBountyStatus = 132,
+    EmptyName = 133,
+    ZeroReward = 134,
+    ZeroDeadline = 135,
+    InsuffCreatorBalance = 136,
+    InsuffCreatorAllowance = 137,
+    InvalidCreator = 138,
+    InvalidParticipant = 139,
+    InvalidBountyID = 140,
+    InvalidWorkRepo = 141,
+    NoTimeout = 142
 }
 
 #[derive(Clone)]
