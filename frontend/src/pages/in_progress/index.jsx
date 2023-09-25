@@ -1,40 +1,43 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Reveal } from 'react-awesome-reveal';
+import { useCustomWallet } from '../../contexts/WalletContext';
 import Sidebar from '../../components/menu/SideBar';
 import Subheader from '../../components/menu/SubHeader';
 import MainHeader from '../../components/menu/MainHeader';
 import HelpButton from '../../components/menu/HelpButton';
 import SearchBox from '../../components/menu/SearchBox';
 import WarningMsg from '../../components/WarningMsg';
-// import InBountiesBody from './InBountiesBody';
-import InBounty from './InBounty';
-import { IsSmMobile, fadeInUp } from '../../utils';
-import { useCustomWallet } from '../../context/WalletContext';
 import useBackend from '../../hooks/useBackend';
+import { IsSmMobile, fadeInUp, isEmpty } from '../../utils';
+import InBounty from './InBounty';
 
 const InProgress = () => {
   const { isConnected, walletAddress } = useCustomWallet();
   const { getAppliedBounties } = useBackend();
-  
+
   const [bounties, setBounties] = useState([]);
 
   const [isSearchShow, setShow] = useState(false);
-  
+
+  const [searchChanged, setSearchChanged] = useState(false);
+
   const searchbox = useRef(null);
 
   useEffect(() => {
     async function fetchBounties() {
-      if (!walletAddress)
+      setBounties([]);
+      if (!isConnected)
         return;
 
-      const appliedBounties = await getAppliedBounties(walletAddress);
+      var appliedBounties = await getAppliedBounties(walletAddress);
       console.log('appliedBounties:', appliedBounties);
+      appliedBounties = appliedBounties.filter( item => searchbox?.current?.filter(item) );
       setBounties(appliedBounties);
     }
 
     fetchBounties();
-  }, [walletAddress]);
+  }, [isConnected, walletAddress, searchChanged]);
 
 
   return (
@@ -50,13 +53,15 @@ const InProgress = () => {
                 <p className='text-[40px] lg:text-[32px] md:text-[24px] sm:text-center text-white'>In Progress</p>
               </div>
             </Reveal>
-            <SearchBox ref={searchbox} callback={() =>{ setShow( isSearchShow => !isSearchShow ) }}/>
+            <SearchBox ref={searchbox} onSearchChange={ () => setSearchChanged(true)}  callback={() => { setShow(isSearchShow => !isSearchShow) }} />
           </div>
-          
-	      {!isConnected &&
-            <WarningMsg msg='You need to connect your wallet in order to submit a work.' />
+
+          {!isConnected &&
+            <div className='pl-[30px] lg:pl-0'>
+              <WarningMsg msg='You need to connect your wallet in order to submit a work.' />
+            </div>
           }
-          
+
           <div className={`app-content ${isSearchShow ? 'blur-sm' : ''}`}>
             {IsSmMobile() ? (
               // <InBountiesBody bounties={bounties} />
@@ -71,9 +76,9 @@ const InProgress = () => {
                   <div {...props} className={'thumb-horizontal'} />
                 }>
                 {/* <InBountiesBody bounties={bounties} /> */
-                bounties?.map((bounty, idx) =>
+                  bounties?.map((bounty, idx) =>
                     <InBounty key={idx} bountyId={bounty.bountyId} />
-                )
+                  )
                 }
               </Scrollbars>
             )}

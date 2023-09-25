@@ -1,24 +1,25 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { Reveal } from 'react-awesome-reveal';
-import { IsSmMobile, fadeInUp } from '../../utils';
+import { Link, useParams, useNavigate } from '@reach/router';
+import { toast } from 'react-toastify';
+import { useCustomWallet } from '../../contexts/WalletContext';
 import MainHeader from '../../components/menu/MainHeader';
-import { Link, useParams } from '@reach/router';
 import HelpButton from '../../components/menu/HelpButton';
 import Subheader from '../../components/menu/SubHeader';
 import { ListingDescription } from '../../components/ListingDescription';
 import { Information } from '../../components/Information';
-import MyBountiesReviewItem from './MyBountiesReviewItem';
 import BackButton from '../../components/menu/BackButton';
-import { useCustomWallet } from '../../context/WalletContext';
 import useBounty,  { WorkStatus } from '../../hooks/useBounty';
 import useBackend from '../../hooks/useBackend';
-import { toast } from 'react-toastify';
+import { IsSmMobile, fadeInUp } from '../../utils';
+import MyBountiesReviewItem from './MyBountiesReviewItem';
 
 const MyBountiesListingBody = ({bounty, works}) => {
   const { isConnected, walletAddress } = useCustomWallet();
   const { cancelBounty, getLastError } = useBounty();
   const { cancelBountyB } = useBackend();
+  const nav = useNavigate();
   
   const onClickCancel = useCallback(async (event) => {
     if (!isConnected) {
@@ -41,6 +42,8 @@ const MyBountiesListingBody = ({bounty, works}) => {
     }
 
     toast('Successfully cancelled bounty!');
+
+    nav('/MyBounties/');
   }, [isConnected, walletAddress, bounty]);
   
   return (

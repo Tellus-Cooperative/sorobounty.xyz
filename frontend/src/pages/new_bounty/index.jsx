@@ -3,18 +3,15 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import { Reveal } from 'react-awesome-reveal';
 import { Link, useLocation, useNavigate } from '@reach/router';
 import { toast } from "react-toastify";
-
+import { useCustomWallet } from '../../contexts/WalletContext';
 import Sidebar from '../../components/menu/SideBar';
 import Subheader from '../../components/menu/SubHeader';
 import MainHeader from '../../components/menu/MainHeader';
 import HelpButton from '../../components/menu/HelpButton';
 import WarningMsg from '../../components/WarningMsg';
-import { SECS_PER_DAY, IsSmMobile, fadeInUp, fadeIn, getDuration } from '../../utils';
-
-import { useCustomWallet } from '../../context/WalletContext';
 import useBounty, { BountyStatus } from '../../hooks/useBounty';
 import useBackend from '../../hooks/useBackend';
-
+import { SECS_PER_DAY, IsSmMobile, fadeInUp, fadeIn, getDuration } from '../../utils';
 
 const NewBountyBody = () => {
   const { walletAddress, isConnected } = useCustomWallet();
@@ -27,7 +24,7 @@ const NewBountyBody = () => {
   const DEF_PAY_AMOUNT = 0;
 
   const [title, setTitle] = useState('');
-  const [payAmount, setPayAmount] = useState();
+  const [payAmount, setPayAmount] = useState('');
   const [duration, setDuration] = useState(0);
   const [type, setType] = useState(0);
   const [difficulty, setDifficulty] = useState(0);
@@ -134,11 +131,11 @@ const NewBountyBody = () => {
     if (!checkCondition()) return;
 
     // approve first
-    const res1 = await approveToken(walletAddress, CONTRACT_ID, Number(payAmount) * 10000000);
-    if (res1) {
-      toast.error('Failed to approve token!');
-      return;
-    }
+    // const res1 = await approveToken(walletAddress, CONTRACT_ID, Number(payAmount) * 10000000);
+    // if (res1) {
+    //   toast.error('Failed to approve token!');
+    //   return;
+    // }
 
     const days = getDuration(duration);
     const bountyIdOld = await countBounties();
@@ -161,6 +158,8 @@ const NewBountyBody = () => {
     }
 
     toast('Successfully added bounty!');
+
+    nav('/NewBounty/');
   }, [walletAddress, title, payAmount, duration, type, difficulty, topic, description, gitHub]);
 
   return (

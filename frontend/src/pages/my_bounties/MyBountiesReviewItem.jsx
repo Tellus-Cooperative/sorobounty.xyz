@@ -1,15 +1,17 @@
 import { useCallback, useState, useEffect } from "react";
 import { Reveal } from 'react-awesome-reveal';
 import { toast } from 'react-toastify';
-import { fadeInUp, shortenAddress } from '../../utils';
-import { useCustomWallet } from "../../context/WalletContext";
+import { useNavigate } from '@reach/router';
+import { useCustomWallet } from "../../contexts/WalletContext";
 import useBounty from "../../hooks/useBounty";
 import useBackend from '../../hooks/useBackend';
+import { fadeInUp, shortenAddress } from '../../utils';
 
 const MyBountiesReviewItem = ({work}) => {
   const { isConnected, walletAddress } = useCustomWallet();
-  const { approveWork, rejectWork } = useBounty();
+  const { approveWork, rejectWork, getLastError } = useBounty();
   const { approveWorkB, rejectWorkB } = useBackend();
+  const nav = useNavigate();
   const [isExpanded, setExpanded] = useState(false);
   
   const handleExpanded = useCallback(() => {
@@ -37,6 +39,8 @@ const MyBountiesReviewItem = ({work}) => {
     }
 
     toast('Successfully approved work!');
+
+    nav('/MyBounties/');
   }, [isConnected, walletAddress, work]);
 
   const onClickReject = useCallback(async (event) => {
@@ -60,6 +64,8 @@ const MyBountiesReviewItem = ({work}) => {
     }
 
     toast('Successfully rejected work!');
+
+    nav('/MyBounties/');
   }, [isConnected, walletAddress, work]);
 
   return (

@@ -1,8 +1,9 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Reveal } from 'react-awesome-reveal';
-import { Link, useParams } from '@reach/router';
+import { Link, useParams, useNavigate } from '@reach/router';
 import Scrollbars from 'react-custom-scrollbars';
 import { toast } from 'react-toastify';
+import { useCustomWallet } from '../../contexts/WalletContext';
 import MainHeader from '../../components/menu/MainHeader';
 import HelpButton from '../../components/menu/HelpButton';
 import Subheader from '../../components/menu/SubHeader';
@@ -11,12 +12,10 @@ import { ListingDescription } from '../../components/ListingDescription';
 import { Participant } from '../../components/Participant';
 import WarningMsg from '../../components/WarningMsg';
 import BackButton from '../../components/menu/BackButton'
-import { Drawer } from './Drawer';
-import { IsSmMobile, fadeInUp } from '../../utils';
-
-import { useCustomWallet } from '../../context/WalletContext';
 import useBounty from '../../hooks/useBounty';
 import useBackend from '../../hooks/useBackend';
+import { IsSmMobile, fadeInUp } from '../../utils';
+import { Drawer } from './Drawer';
 
 const InBountyListingBody = ({ bounty, callback }) => {
   return (
@@ -71,9 +70,10 @@ const InBountyListingBody = ({ bounty, callback }) => {
 
 const InBountyListing = () => {
   const { isConnected, walletAddress } = useCustomWallet();
-  const { submitToBounty } = useBounty();
+  const { submitToBounty, getLastError } = useBounty();
   const { getSingleBounty, getWork, submitWork } = useBackend();
   const { id: bountyId } = useParams();
+  const nav = useNavigate();
   const [bounty, setBounty] = useState({});
   const [work, setWork] = useState({});
   
@@ -108,7 +108,7 @@ const InBountyListing = () => {
     setGitHub(event.target.value);
   }, []);
 
-  const onApplyClicked = useCallback(async (event) => {
+  const onSubmitClicked = useCallback(async (event) => {
     if (!isConnected) {
       toast.warning('Wallet not connected yet!');
       return;
@@ -129,6 +129,8 @@ const InBountyListing = () => {
     }
 
     toast('Successfully submitted work!');
+
+    nav('/InProgress/');
   }, [isConnected, walletAddress, work, gitHub]);
 
   return (
@@ -163,7 +165,7 @@ const InBountyListing = () => {
             <span className='text-xl'>Back</span>
           </div>
         </button>
-        {!isConnected && (<WarningMsg msg='You need to connect your wallet in order to create a bounty.'/>)}
+        {!isConnected && (<WarningMsg msg='You need to connect your wallet in order to submit a work.'/>)}
         <div className="mt-3 text-[20px] font-bold">
           <span>Bounty Listing / Submit Work</span>
         </div>
@@ -187,7 +189,7 @@ const InBountyListing = () => {
         </div>
         <div className='input-form-control mt-3'>
           <div className="input-control w-1/2 border-0">
-            <button className='input-main btn-hover' onClick={onApplyClicked}>Submit Work</button>
+            <button className='input-main btn-hover' onClick={onSubmitClicked}>Submit Work</button>
           </div>
         </div>
       </Drawer>

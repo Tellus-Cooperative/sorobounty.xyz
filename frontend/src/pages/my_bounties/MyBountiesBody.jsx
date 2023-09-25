@@ -2,20 +2,39 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Reveal } from 'react-awesome-reveal';
 import { useNavigate } from '@reach/router';
 import { toast} from 'react-toastify';
-import { fadeInUp } from '../../utils';
-import { useCustomWallet } from '../../context/WalletContext';
+import { useCustomWallet } from '../../contexts/WalletContext';
 import useBounty from '../../hooks/useBounty';
 import useBackend from '../../hooks/useBackend';
+import { fadeInUp } from '../../utils';
 
 export const MyBountyBodyListItem = ({ bountyId }) => {
   const { isConnected, walletAddress } = useCustomWallet();
+  const { getSingleBounty, countSubmissions, closeBountyB, getLastError } = useBackend();
   const { closeBounty } = useBounty();
-  const { getSingleBounty, countSubmissions, closeBountyB } = useBackend();
-
+  
   const [bounty, setBounty] = useState([]);
   const [submissions, setSubmissions] = useState(0);
   
   const isExpired = useMemo(() => bounty?.endDate <= Date.now(), [bounty]);
+
+  const nav = useNavigate();
+
+  useEffect(() => {
+    async function fetchBounties() {
+      if (!isConnected || !walletAddress || !bountyId)
+        return;
+
+      const singleBounty = await getSingleBounty(bountyId);
+      // console.log('singleBounty:', singleBounty);
+      setBounty(singleBounty);
+
+      const submitCount = await countSubmissions(walletAddress, bountyId);
+      // console.log('submitCount:', submitCount);
+      setSubmissions(submitCount);
+    }
+
+    fetchBounties();
+  }, [isConnected, walletAddress, bountyId]);
 
   const onClickClaim = useCallback(async(event) => {
     if (!isConnected) {
@@ -39,25 +58,6 @@ export const MyBountyBodyListItem = ({ bountyId }) => {
 
     toast('Successfully closed bounty!');
   }, [isConnected, walletAddress, bountyId]);
-
-  useEffect(() => {
-    async function fetchBounties() {
-      if (!isConnected || !walletAddress || !bountyId)
-        return;
-
-      const singleBounty = await getSingleBounty(bountyId);
-      // console.log('singleBounty:', singleBounty);
-      setBounty(singleBounty);
-
-      const submitCount = await countSubmissions(walletAddress, bountyId);
-      // console.log('submitCount:', submitCount);
-      setSubmissions(submitCount);
-    }
-
-    fetchBounties();
-  }, [isConnected, walletAddress, bountyId]);
-
-  const nav = useNavigate();
 
   return (
     <div className='app-body'>

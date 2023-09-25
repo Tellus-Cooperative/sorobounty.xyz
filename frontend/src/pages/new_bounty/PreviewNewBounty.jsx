@@ -1,17 +1,17 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
+import { toast } from "react-toastify";
+import { useNavigate, useLocation } from "@reach/router";
+import { useCustomWallet } from '../../contexts/WalletContext';
 import Subheader from '../../components/menu/SubHeader';
 import MainHeader from '../../components/menu/MainHeader';
-import { toast } from "react-toastify";
 import HelpButton from '../../components/menu/HelpButton';
 import WarningMsg from '../../components/WarningMsg';
 import { Information } from '../../components/Information';
 import BackButton from '../../components/menu/BackButton';
-import { useNavigate, useLocation } from "@reach/router";
-import { useCustomWallet } from '../../context/WalletContext';
-import { SECS_PER_DAY, IsSmMobile, getBountyStatus, getDuration } from '../../utils';
 import useBounty from '../../hooks/useBounty';
 import useBackend from '../../hooks/useBackend';
+import { SECS_PER_DAY, IsSmMobile, getBountyStatus, getDuration } from '../../utils';
 
 const PreviewBody = () => {
   const nav = useNavigate();
@@ -62,11 +62,11 @@ const PreviewBody = () => {
     if ( !checkCondition() ) return;
     
     // approve first
-    const res1 = await approveToken(walletAddress, CONTRACT_ID, Number(payAmount) * 10000000);
-    if (res1) {
-      toast.error('Failed to approve token!');
-      return;
-    }
+    // const res1 = await approveToken(walletAddress, CONTRACT_ID, Number(payAmount) * 10000000);
+    // if (res1) {
+    //   toast.error('Failed to approve token!');
+    //   return;
+    // }
 
     const days = getDuration(duration);
     const bountyIdOld = await countBounties();
@@ -89,6 +89,8 @@ const PreviewBody = () => {
     }
 
     toast('Successfully added bounty!');
+
+    nav('/NewBounty/');
   }, [walletAddress, title, payAmount, description, duration, type, topic, difficulty]);
 
   return (
