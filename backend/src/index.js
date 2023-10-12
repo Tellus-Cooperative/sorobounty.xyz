@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const { connect } = require('./db');
 const cors = require('cors');
+const path = require('path');
 
 dotenv.config();
 if (process.env.NODE_ENV == ('development' || 'development ')) {
@@ -26,5 +27,5 @@ app.use('/api/bounty', require('./routes/bounty'));
 
 app.listen(process.env.PORT, async function () {
     console.log(`Ready to go. listening on port:[${process.env.PORT}] on pid:[${process.pid}]`);
-    await connect()
+    await connect();
 });
