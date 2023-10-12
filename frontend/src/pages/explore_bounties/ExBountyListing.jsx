@@ -10,15 +10,15 @@ import { Information } from '../../components/Information';
 import { Participant } from '../../components/Participant';
 import BackButton from '../../components/menu/BackButton';
 import { useCustomWallet } from '../../contexts/WalletContext';
-import useBounty from '../../hooks/useBounty';
+import { useContract } from '../../contexts/ContractContext';
 import useBackend from '../../hooks/useBackend';
-import { IsSmMobile, fadeInUp } from '../../utils';
+import { IsSmMobile } from '../../utils';
 
 const ExBountyListingBody = ({bounty}) => {
   const nav = useNavigate();
   const { isConnected, walletAddress } = useCustomWallet();
-  const { countWorks, applyBounty, getLastError } = useBounty();
-  const { addWork } = useBackend();
+  const { applyBounty } = useContract();
+  const { createWork } = useBackend();
   
   const onClickApply = useCallback(async (event) => {
     if (!isConnected) {
@@ -26,22 +26,19 @@ const ExBountyListingBody = ({bounty}) => {
       return;
     }
 
-    const workIdOld = await countWorks();
-    const workIdNew = await applyBounty(walletAddress, bounty?.bountyId);
-    if (workIdNew < 0 || workIdOld === workIdNew) {
-      const error = await getLastError();
+    const workId = await applyBounty(walletAddress, bounty?.bountyId);
+    if (workId < 0) {
       toast.error('Failed to apply to bounty!');
-      console.error('error:', error);
       return;
     }
 
-    const res = await addWork(walletAddress, bounty?.bountyId, workIdOld);
+    const res = await createWork(walletAddress, bounty?.bountyId, workId);
     if (res) {
-      toast.error('Failed to add work!');
+      toast.error('Failed to create work!');
       return;
     }
 
-    toast('Successfully added work!');
+    toast('Successfully created work!');
 
     nav('/ExploreBounties/');
   }, [isConnected, walletAddress, bounty]);
@@ -64,6 +61,7 @@ const ExBountyListingBody = ({bounty}) => {
               gitHub = {bounty?.gitHub} 
               startDate = {Date.parse(bounty?.startDate)} 
               endDate = {Date.parse(bounty?.endDate)} 
+              block = {bounty?.block} 
               status = {bounty?.status}
             />
             <div className='w-full my-2 py-3'>
@@ -81,7 +79,8 @@ const ExBountyListingBody = ({bounty}) => {
               topic = {bounty?.topic} 
               gitHub = {bounty?.gitHub} 
               startDate = {Date.parse(bounty?.startDate)} 
-              endDate = {Date.parse(bounty?.endDate)}
+              endDate = {Date.parse(bounty?.endDate)} 
+              block = {bounty?.block} 
               status = {bounty?.status}
           />
           <Participant bountyId={bounty.bountyId} />
@@ -114,7 +113,7 @@ const ExBountyListing = () => {
         <MainHeader />
         <div className='bounty-listing-container'>
           <Subheader />
-          <BackButton to="/ExploreBounties" />
+          <BackButton to='/ExploreBounties' />
           <div className='app-header px-0 xsm:items-start xl:items-center xsm:flex-col'>
             <div className='app-title'>
               <p className='text-[40px] sm:text-center text-white pt-3'>{bounty?.title}</p>
@@ -123,7 +122,7 @@ const ExBountyListing = () => {
           {IsSmMobile() ? (
             <ExBountyListingBody bounty={bounty} />
           ) : (
-            <Scrollbars id='body-scroll-bar' autoHide style={{ height: "100%" }}
+            <Scrollbars id='body-scroll-bar' autoHide style={{ height: '100%' }}
               renderThumbVertical={({ style, ...props }) =>
                 <div {...props} className={'thumb-horizontal'} />
               }>

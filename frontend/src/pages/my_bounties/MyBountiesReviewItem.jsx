@@ -1,15 +1,15 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from 'react';
 import { Reveal } from 'react-awesome-reveal';
 import { toast } from 'react-toastify';
 import { useNavigate } from '@reach/router';
-import { useCustomWallet } from "../../contexts/WalletContext";
-import useBounty from "../../hooks/useBounty";
+import { useCustomWallet } from '../../contexts/WalletContext';
+import { useContract } from '../../contexts/ContractContext';
 import useBackend from '../../hooks/useBackend';
 import { fadeInUp, shortenAddress } from '../../utils';
 
 const MyBountiesReviewItem = ({work}) => {
   const { isConnected, walletAddress } = useCustomWallet();
-  const { approveWork, rejectWork, getLastError } = useBounty();
+  const { approveWork, rejectWork } = useContract();
   const { approveWorkB, rejectWorkB } = useBackend();
   const nav = useNavigate();
   const [isExpanded, setExpanded] = useState(false);
@@ -26,9 +26,7 @@ const MyBountiesReviewItem = ({work}) => {
 
     const res1 = await approveWork(walletAddress, work?.workId);
     if (res1) {
-      const error = await getLastError();
       toast.error('Failed to approve work!');
-      console.error('error:', error);
       return;
     }
 
@@ -51,9 +49,7 @@ const MyBountiesReviewItem = ({work}) => {
 
     const res1 = await rejectWork(walletAddress, work?.workId);
     if (res1) {
-      const error = await getLastError();
       toast.error('Failed to reject work!');
-      console.error('error:', error);
       return;
     }
 
@@ -82,13 +78,13 @@ const MyBountiesReviewItem = ({work}) => {
         </div>
       </div>
       {isExpanded &&
-        <div className="flex-col">
-          <div className="py-2 app-gray">{work?.title}</div>
-          <div className="py-2 app-gray ">{work?.description}</div>
-          <a className="py-2 app-gray " href="#">{work?.gitHub}</a>
-          <div className="flex justify-end gap-2">
-            <button className="rounded-2xl border px-2 py-1" onClick={onClickApprove}>Approve</button>
-            <button className="rounded-2xl border px-2 py-1" onClick={onClickReject}>Reject</button>
+        <div className='flex-col'>
+          <div className='py-2 app-gray'>{work?.title}</div>
+          <div className='py-2 app-gray '>{work?.description}</div>
+          <a className='py-2 app-gray ' href='#'>{work?.gitHub}</a>
+          <div className='flex justify-end gap-2'>
+            <button className='rounded-2xl border px-2 py-1' onClick={onClickApprove}>Approve</button>
+            <button className='rounded-2xl border px-2 py-1' onClick={onClickReject}>Reject</button>
           </div>
         </div>
       }

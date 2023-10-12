@@ -1,19 +1,30 @@
-// import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+import { convertToString, convertToInteger } from './tools';
 
-// const initialState = {
-//     connect: null,
-// };
+const initialState = {
+    chainId: 0,
+    explorerUrl: '',
+    rpcUrl: ''
+};
 
-// export const networkSlice = createSlice({
-//     name: 'info',
-//     initialState,
-//     reducers: {
-//         changeConnect: (state, action) => {
-//             state.connect = action.payload;
-//         }
-//     }
-// });
+const networkSlice = createSlice({
+    name: 'chain',
+    initialState,
+    reducers: {
+        updateChainId: (state, action) => {
+            state.chainId = convertToInteger(action.payload);
+        },
 
-// export const { changeConnect } = networkSlice.actions;
+        updateExplorerUrl: (state, action) => {
+            state.explorerUrl = convertToString(action.payload);
+        },
 
-// export default networkSlice.reducer;
+        updateRpcUrl: (state, action) => {
+            state.rpcUrl = convertToString(action.payload);
+        }
+    }
+});
+
+export const { updateChainId, updateExplorerUrl, updateRpcUrl } = networkSlice.actions;
+
+export default networkSlice.reducer;

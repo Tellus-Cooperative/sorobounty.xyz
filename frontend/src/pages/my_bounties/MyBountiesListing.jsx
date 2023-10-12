@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { Reveal } from 'react-awesome-reveal';
-import { Link, useParams, useNavigate } from '@reach/router';
+import { useParams, useNavigate } from '@reach/router';
 import { toast } from 'react-toastify';
 import { useCustomWallet } from '../../contexts/WalletContext';
 import MainHeader from '../../components/menu/MainHeader';
@@ -10,14 +9,14 @@ import Subheader from '../../components/menu/SubHeader';
 import { ListingDescription } from '../../components/ListingDescription';
 import { Information } from '../../components/Information';
 import BackButton from '../../components/menu/BackButton';
-import useBounty,  { WorkStatus } from '../../hooks/useBounty';
+import { useContract, WorkStatus } from '../../contexts/ContractContext';
 import useBackend from '../../hooks/useBackend';
-import { IsSmMobile, fadeInUp } from '../../utils';
+import { IsSmMobile } from '../../utils';
 import MyBountiesReviewItem from './MyBountiesReviewItem';
 
 const MyBountiesListingBody = ({bounty, works}) => {
   const { isConnected, walletAddress } = useCustomWallet();
-  const { cancelBounty, getLastError } = useBounty();
+  const { cancelBounty } = useContract();
   const { cancelBountyB } = useBackend();
   const nav = useNavigate();
   
@@ -29,9 +28,7 @@ const MyBountiesListingBody = ({bounty, works}) => {
 
     const res1 = await cancelBounty(walletAddress, bounty?.bountyId);
     if (res1) {
-      const error = await getLastError();
       toast.error('Failed to cancel bounty!');
-      console.error('error:', error);
       return;
     }
 
@@ -67,7 +64,8 @@ const MyBountiesListingBody = ({bounty, works}) => {
               topic = {bounty?.topic} 
               gitHub = {bounty?.gitHub} 
               startDate = {Date.parse(bounty?.startDate)} 
-              endDate = {Date.parse(bounty?.endDate)}
+              endDate = {Date.parse(bounty?.endDate)} 
+              block = {bounty?.block} 
               status = {bounty?.status}
           />
             <div className='w-full my-2 py-3'>
@@ -85,7 +83,8 @@ const MyBountiesListingBody = ({bounty, works}) => {
               topic = {bounty?.topic} 
               gitHub = {bounty?.gitHub} 
               startDate = {Date.parse(bounty?.startDate)} 
-              endDate = {Date.parse(bounty?.endDate)}
+              endDate = {Date.parse(bounty?.endDate)} 
+              block = {bounty?.block} 
               status = {bounty?.status}
           />
           {works?.map((work, idx) => {
@@ -126,7 +125,7 @@ const MyBountiesListing = () => {
         <MainHeader />
         <div className='bounty-listing-container'>
           <Subheader />
-          <BackButton to="/MyBounties" />
+          <BackButton to='/MyBounties' />
           <div className='app-header px-0 xsm:items-start xl:items-center xsm:flex-col'>
             <div className='app-title'>
               <p className='text-[40px] sm:text-center text-white pt-3'>{bounty?.title}</p>
@@ -135,7 +134,7 @@ const MyBountiesListing = () => {
           {IsSmMobile() ? (
             <MyBountiesListingBody bounty={bounty} works={works} />
           ) : (
-            <Scrollbars id='body-scroll-bar' autoHide style={{ height: "100%" }}
+            <Scrollbars id='body-scroll-bar' autoHide style={{ height: '100%' }}
               renderThumbVertical={({ style, ...props }) =>
                 <div {...props} className={'thumb-horizontal'} />
               }>
