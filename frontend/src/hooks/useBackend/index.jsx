@@ -3,7 +3,7 @@ import {BountyStatus, WorkStatus} from '../../contexts/ContractContext';
 
 const useBackend = () => {
     // const BACKEND_URL = 'https://sorobounty-6345876ced42.herokuapp.com/api/bounty/';
-    const BACKEND_URL = 'http://localhost:8888/api/bounty/';
+    const BACKEND_URL = 'http://localhost:4000/api/bounty/';
 
     const getUser = async (wallet) => {
         let name = '';
