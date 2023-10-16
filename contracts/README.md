@@ -3,7 +3,7 @@ The Soroban Smart Contract, embedded within the Bounty Hunter Web Application, f
 
 The following diagram depicts the overall architecture of the smart contract:
 
-![contract_arch_bounties.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/b1beb753-ca01-4fff-a2bc-25d8e01b43a8/796e0eeb-0033-4da5-bbc3-9f9da9860f52/contract_arch_bounties.png)
+![contract_arch_bounties.png](https://github.com/Tellus-Cooperative/sorobounty.xyz/blob/main/contracts/contract_architecture.png)
 
 ## Modules
 This project is structured into six modules, each responsible for specific aspects of the smart contract functionality:
