@@ -1,5 +1,7 @@
-# BountyHunter
-BountyHunter Web Application on Stellar Blockchain
+# Sorobounty.xyz
+![Image](https://github.com/Tellus-Cooperative/sorobounty.xyz/blob/main/sorobounty_logo.png)
+## Overview
+The Bounty Hunter Web Application is a platform that facilitates the creation and participation in bounties for various tasks. This application leverages the Stellar blockchain through the Soroban platform to establish an Escrow Smart Contract, ensuring secure fund management, authentication, and a review stage for accepting or rejecting work.
 
 ## How to execute on local environment
 Download Project:
